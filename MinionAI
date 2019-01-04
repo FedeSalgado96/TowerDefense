@@ -1,0 +1,95 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class MinionIA : MonoBehaviour {
+
+	public float velocidad;
+	NavMeshAgent nav;
+	public GameObject BaseJugador;
+	public GameObject Caminos;
+	public CaminoManager _CaminoManager;
+	Animator anim;
+	public int PuntoActual;
+	public float DistanciaMinima;
+	public int vida;
+	public bool Vivo;
+	float step;
+	float tiempoDeMuerte;
+	float tiempoDeEspera;
+
+	void Start () {
+		tiempoDeEspera = 3f;
+		PuntoActual = 0;
+		DistanciaMinima = 0.5f;
+		vida = 100;
+		Vivo = true;
+		nav = GetComponent<NavMeshAgent> ();
+		anim = GetComponent<Animator> ();
+		BaseJugador = GameObject.FindGameObjectWithTag ("Player");
+		Caminos = GameObject.FindGameObjectWithTag ("CaminosManager");
+		_CaminoManager = Caminos.GetComponent<CaminoManager> ();
+		SeguirCamino ();
+
+	}
+	
+	void Update () {
+		step = velocidad * Time.deltaTime;
+		if (Vivo) {
+			if (nav.remainingDistance < DistanciaMinima) {
+				SeguirCamino ();
+			}
+		} else {
+			Descomponer ();
+
+		}
+	}
+		
+	public void SeguirCamino(){
+		
+		if (_CaminoManager.PuntosDeCamino.Count > 0) {
+			if(PuntoActual < _CaminoManager.PuntosDeCamino.Count){
+			nav.SetDestination (_CaminoManager.PuntosDeCamino[PuntoActual].transform.position);
+			PuntoActual = (PuntoActual + 1);
+			}
+		
+		}
+	}
+
+	public void RecibirDaño(int daño){
+		vida = vida - daño;
+
+		if (vida < 1) {
+			Vivo = false;
+			Morir ();
+
+		}
+	}
+
+	public void Morir(){
+		anim.SetBool ("Muerte",true);
+		gameObject.tag = "Untagged";
+		tiempoDeMuerte = Time.time;
+	}
+
+	public void Descomponer(){
+		if (nav.enabled == true) {
+			nav.enabled = false;
+		}
+
+		if(tiempoDeMuerte + tiempoDeEspera < Time.time){
+			Vector3 abajo = new Vector3 (transform.position.x,transform.position.y - 10, transform.position.z);
+			transform.position = Vector3.MoveTowards (transform.position, abajo,step);
+			if (tiempoDeMuerte + tiempoDeEspera * 2 < Time.time) {
+				Destroy (gameObject);
+
+			}
+		}
+
+	}
+
+
+}
+
+
