@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CaminoManager : MonoBehaviour {
+
+
+	public GameObject Punto;
+	Vector3 SpawnPoint;
+	public List<GameObject> PuntosDeCamino;
+
+	public void CrearPunto(){
+		int UltimoPunto = PuntosDeCamino.Count;
+		if(UltimoPunto > 0){
+		SpawnPoint = PuntosDeCamino [UltimoPunto - 1].transform.position;
+		}
+		PuntosDeCamino.Add (Instantiate (Punto,SpawnPoint,Quaternion.identity,gameObject.transform));
+	}
+
+	public void SacarPunto(){
+		if (PuntosDeCamino.Count > 0) {
+			DestroyImmediate (PuntosDeCamino [PuntosDeCamino.Count - 1]);
+			PuntosDeCamino.Remove (PuntosDeCamino [PuntosDeCamino.Count - 1]);
+		}
+	}
+
+
+
+}
