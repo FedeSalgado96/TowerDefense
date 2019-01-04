@@ -1,0 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CameraMove : MonoBehaviour {
+	public bool MovimientoConMouse;
+	public float SensMovimiento;
+	public float EdgeSize;
+	public float Sens;
+	public float SensZoom;
+	public float ZoomMinimo;
+	public int LimiteSupX,LimiteInfX,LimiteSupZ,LimiteInfZ;
+	public Camera Cam;
+	void Start () {
+		MovimientoConMouse = false;
+	}
+	
+	void Update () {
+		Movimiento ();
+		Zoom ();
+
+	}
+
+	public void Movimiento(){
+		float X = Input.GetAxis ("Horizontal");
+		float Y = Input.GetAxis ("Vertical");
+		Vector3 Movimiento = new Vector3 (X * Sens * Time.deltaTime , 0, Y * Sens * Time.deltaTime);
+
+		transform.Translate (Movimiento);	
+		transform.position= new Vector3(Mathf.Clamp (transform.position.x, LimiteInfX, LimiteSupX),transform.position.y,Mathf.Clamp (transform.position.z, LimiteInfZ,LimiteSupZ));
+	}
+
+	public void Zoom(){
+		Cam.fieldOfView = Mathf.Clamp ((Cam.fieldOfView - (Input.mouseScrollDelta.y * SensZoom)), ZoomMinimo, 60);
+		if (MovimientoConMouse) {
+			if (Input.mousePosition.x > Screen.width - EdgeSize) {
+				transform.Translate (SensMovimiento * Time.deltaTime, 0, 0);
+			}
+			if (Input.mousePosition.x < EdgeSize) {
+				transform.Translate (-SensMovimiento * Time.deltaTime, 0, 0);
+			}
+			if (Input.mousePosition.y > Screen.height - EdgeSize) {
+				transform.Translate (0, 0, SensMovimiento * Time.deltaTime);
+			}
+			if (Input.mousePosition.y < EdgeSize) {
+				transform.Translate (0, 0, -SensMovimiento * Time.deltaTime);
+			}
+		}
+	}
+
+}	
+
+
