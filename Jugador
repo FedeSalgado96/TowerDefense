@@ -1,0 +1,36 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Jugador : MonoBehaviour {
+	public Camera Camara;
+	public GameObject BaseSeleccionada;
+
+	void Start () {
+		
+	}
+	
+	void Update () {
+		if (Input.GetKeyDown (KeyCode.Mouse0)) {
+			RaycastHit hit;
+			Ray ray = Camara.ScreenPointToRay (Input.mousePosition);
+
+			if (Physics.Raycast (ray, out hit)) {
+				GameObject hited = hit.transform.gameObject;
+
+				if (hited.CompareTag ("BaseTorre")) {
+					BaseSeleccionada = hited;
+					hited.GetComponent<BaseTorre> ().Activar ();
+				}
+
+				if (hited.CompareTag ("Botones")) {
+						hited.GetComponent<Botonera> ().CrearTorre ();
+
+				}
+
+				
+			}
+
+		}
+	}
+}
