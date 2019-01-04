@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Disparo : MonoBehaviour {
+
+	public AtaqueTorre _Torre;
+	public GameObject Impacto;
+	public Vector3 direccion;
+	public float velocidad;
+	public MinionIA _minionIA;
+	public int Daño;
+	public float DistanciaMinima;
+
+	public GameObject objetivodisparo;
+
+	void Start () {
+		_Torre = GetComponentInParent<AtaqueTorre> ();
+		_minionIA = _Torre._objetivo.GetComponent<MinionIA> ();
+		Daño = _Torre.daño;
+		objetivodisparo = _Torre._objetivo;
+	}
+	
+	void Update () {
+		CaminoAlMinionDos ();
+	}
+		
+
+	public void CaminoAlMinionDos(){
+		transform.position = Vector3.MoveTowards (transform.position, objetivodisparo.transform.position, velocidad * Time.deltaTime);
+		if (Vector3.Distance (objetivodisparo.transform.position, transform.position) < 2) {
+			Instantiate (Impacto,transform.position,Quaternion.identity);
+			Destroy (gameObject);
+			_minionIA.RecibirDaño (Daño);
+
+		}
+	}
+
+}
