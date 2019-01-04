@@ -1,0 +1,51 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AtaqueTorre : MonoBehaviour {
+
+	public GameObject _objetivo;
+	public GameObject[] Minions;
+	public GameObject Disparo;
+	public GameObject Centro;
+	public float Rango;
+	public float Cadencia;
+	float SiguienteDisparo;
+	MinionIA _MinionIA;
+	public int daño;
+	float DistanciaMinima;
+
+
+	void Start () {
+		InvokeRepeating ("SeleccionarMinion",0,0.5f);
+	}
+
+	void Update () {
+		
+	}
+
+	public void SeleccionarMinion(){
+		Minions = GameObject.FindGameObjectsWithTag ("Minion");
+		DistanciaMinima = Mathf.Infinity;
+		_objetivo = null;
+		foreach (GameObject minion in Minions) {
+			float distanciaAlEnemigo = Vector3.Distance (transform.position, minion.transform.position);
+			if (distanciaAlEnemigo < DistanciaMinima) {
+				DistanciaMinima = distanciaAlEnemigo;
+				_objetivo = minion;
+			}
+		}
+		if (_objetivo != null && DistanciaMinima <= Rango) {
+			Atacar ();
+		}
+	}
+
+
+	public void Atacar(){
+		if (Time.time > SiguienteDisparo) {
+			SiguienteDisparo = Time.time + Cadencia;
+			Instantiate (Disparo, Centro.transform.position, Quaternion.identity, gameObject.transform);
+		}
+
+	}
+}
